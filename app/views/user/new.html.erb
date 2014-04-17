@@ -1,0 +1,214 @@
+<section id="content">
+		
+<%= form_for @user ,:as => :user, :url =>create_user_path, :method => 'post', :id=>"registrationForm"  do |f| %>
+  <h1>Register Here</h1>
+
+ <% if @user.errors.any? %>
+<div class="error_messages">
+<h2>Form is invalid</h2>
+<ul>
+<% for message in @user.errors.full_messages %>
+<li><%= message %></li>
+<% end %>
+</ul>
+</div>
+<% end %>
+		<div id="sign_up_window1">
+<p>
+  <%= f.text_field :first_name, :placeholder => "First Name" %>
+</p>
+
+<p>
+ <%= f.text_field :last_name, :placeholder => "Last Name"%>
+</p>
+
+<p>
+
+  <%= f.text_field :email, :placeholder => "E-mail",:autocomplete=>"off"%>
+  <div class="check"></div>
+
+</p>
+<p>
+
+  <%= f.text_field :mobile_no, :placeholder => "Mobile Number" , :id => "username"%>
+
+</p>
+<p>
+  <%= f.password_field :password, :placeholder => "Password", :id => "password" %>
+</p>
+
+<p>
+  <%= f.password_field :password_confirmation, :placeholder => "Password Confirmation", :id => "password" %>
+</p>
+	<input type="button" value="submit" id="btnNext" class="submit" />	
+</div>
+		
+<div id="sign_up_window2">
+							<h3>Step 2</h3>
+							<%= f.file_field :profile_pic ,:class=>"input" ,:onchange=>'Test.UpdatePreview(this)' %>
+								<input type="button" value="submit" id="btnNext2" class="submit" />	
+
+							</div>
+							<div id="sign_up_window3">
+							<h3>Step 3 </h3>
+							Select Category </br>
+						
+						<% @category.each do |c| %> 
+				
+
+  
+  							<%= check_box_tag 'category_ids[]', c.id -%><%= c.name %><br />
+
+			           <%end%>
+				
+					 
+							<p>
+  <%= f.submit "Register" %>
+</p>
+							</div>
+
+
+<% end %>
+</section>
+<script>
+		$(document).ready(function(){
+				
+		var checkUserEmail;
+		var  validator = $("#new_user").validate( {
+
+        rules:{
+        	 "user[first_name]": "required",
+        	  "user[last_name]": "required",
+        	
+        	  "user[mobile_no]": "required",
+            "user[password]": {
+      		required: true,
+    	  minlength: 6
+	    },
+            "user[email]": "required email"
+        },
+        messages:{
+            "user[first_name]": "First Name Required",
+               "user[last_name]": "Last Name Required",
+
+            "user[mobile_no]": "Mobile Number Required",
+             "user[password]": {
+                required: "Enter Password",
+                minlength: "Enter Minimum 6 character"
+              },
+           "user[email]": {
+                required: "Enter email",
+                email: "Enter valid email"
+            	}
+        	}
+        	
+    	});
+    	
+    	$('#new_user').blur(function(){
+		    validator.validate();
+		});
+		
+		$('#sign_up_window2').hide();
+		$('#sign_up_window3').hide();
+	
+	$(function()
+ {
+  $('#user_email').keyup(function()
+  {
+  var checkemail=$(this).val();
+  
+
+  if(checkemail!=''){
+  $('.check').show();
+
+
+ var uemail = checkemail;
+  $.ajax({
+
+          type: "POST",         
+          data: {Uemail:uemail},
+           url: "/user/check_useremail",
+          dataType: "JSON",
+         
+          success: function(result){
+
+                         
+                           
+               if(result){
+					  $('.check').html('This Email Is Already Taken');
+
+                      $(".check").css("color","red");
+
+                    
+                      $('.check').addClass("red");
+                      $(".user_name").removeClass("white");
+                      $(".user_name").addClass("yellow");
+						
+                
+
+               }else{
+
+                       $('.check').html('This Email Is Avaliable');
+						
+                       $(".check").css("color","green");
+                                            checkUsername=true;
+
+                    
+                       $(".user_name").removeClass("yellow");
+                       $(".user_name").addClass("white");
+            }
+         }
+
+      });
+
+   }else{
+
+       $('.check').html('');
+
+       }
+
+  });
+  
+ });
+ 
+ 
+ 			$('#btnNext').click( function(){
+			if($('#new_user').valid() && checkUsername ){
+				
+				$('#sign_up_window2').show();
+				$('#sign_up_window1').hide(); 
+				
+			}else{
+				
+			}
+			
+		});
+		
+		$('#btnNext2').click( function(){
+			if($('#new_user').valid()){
+		
+				$('#sign_up_window3').show();
+				$('#sign_up_window2').hide(); 
+				
+			}else{
+				
+			}
+			
+		});
+		
+		
+ 
+ 
+		
+		});
+</script>
+
+
+
+
+
+
+
+
+
+

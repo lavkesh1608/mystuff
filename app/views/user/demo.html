@@ -1,0 +1,336 @@
+<script>
+	$(document).ready(function  () {
+		
+	
+	$('#addstuff_window').hide();
+	$('#viewstuff_window').hide();
+	
+	$('#addstuff').click(function(){
+				
+		$('#addstuff_window').show();
+	
+	});
+	
+	$('#viewstuff').click(function(){
+				
+		$('#viewstuff_window').show();
+	
+	});
+	
+	$('#submit').click(function(){
+			
+			var uid=$('#userid').val();	
+		var cid=$('#category_id').val();
+		var brand=$('#brand').val();
+		var model=$('#model').val();
+		var name=$('#name').val();
+		var price=$('#price').val();
+		var desc=$('#description').val();
+		var dop=$('#date_of_purchase').val();
+		
+		$.ajax({
+			       type: "POST",         
+          		   data: {Uid:uid, Cid:cid, Brand:brand, Model:model, Name:name, Price:price, Desc:desc, Dop:dop},
+                   url: "/stuff/create",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		alert("Stuff Added ");
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+		
+		
+		
+		
+	});
+	
+	
+	
+	$(".close_window").click(function() {
+     $("#addstuff_window").hide();
+       $("#viewstuff_window").hide();
+     
+    });
+	
+	
+	  
+	});
+	
+	
+	
+</script>
+<script>
+	$(document).ready(function  () {
+	
+	$('#editstuff_window').hide();
+	$('#viewstuff_window').hide();
+	
+	$('.edit_stuff').click(function(){
+				
+		$('#editstuff_window').show();
+			var sid=$(this).parent().siblings('input').val();
+			$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid},
+                   url: "/stuff/edit",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		var json_x = data;
+				   		
+				   		$('#editbrand').val(json_x['brand']);
+				$('#editmodel').val(json_x['model']);
+				$('#editname').val(json_x['name']);
+				$('#editprice').val(json_x['price']);
+				$('#editdescription').val(json_x['description']);
+				$('#edit_date_of_purchase').val(json_x['date_of_purchase']);
+				   		
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+			
+			$('#productid').val(sid);	
+	
+	});
+	$('#viewstuff').click(function(){
+				
+		$('#viewstuff_window').show();
+	
+	});
+	
+	$('#update').click(function(){
+			
+		
+			var sid=$('#productid').val();
+			var uid=$('#userid').val();	
+					var cid=$('#category_id').val();
+		var brand=$('#editbrand').val();
+		var model=$('#editmodel').val();
+		var name=$('#editname').val();
+		var price=$('#editprice').val();
+		var desc=$('#editdescription').val();
+		var dop=$('#edit_date_of_purchase').val();
+		
+		$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid, Uid:uid, Cid:cid, Brand:brand, Model:model, Name:name, Price:price, Desc:desc, Dop:dop},
+                   url: "/stuff/update",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		alert("Stuff Updated ");
+				   	}else{
+				   		
+				   		ater("Not Updated");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+		
+		
+		
+		
+	});
+	
+	$('.delete_stuff').click(function(){
+				
+			var sid=$(this).parent().siblings('input').val();
+		$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid},
+                   url: "/stuff/delete",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		alert("One Item Deleted");
+				   		
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+		
+		
+		});
+	
+	$(".close_window").click(function() {
+     
+       $("#addstuff_window").hide();
+       $("#viewstuff_window").hide();
+       $('#editstuff_window').hide();
+
+     
+    });
+    
+    $("#selectallstuff").change(function () {
+    	// alert("hi");
+    	// $('.select_stuff').attr("checked", $("#selectallstuff").checked);
+    	
+    	if( $("#selectallstuff").is(':checked')){
+    		
+    		$('.select_stuff').each(function () {
+                $(this).prop("checked", true);
+            });
+    	}else{
+    		$('.select_stuff').each(function () {
+                $(this).prop("checked", false);
+            });
+    	}
+    	
+      
+    })
+    $('#choose_action').change(function () {
+    	
+    	 						var userid=$('#userid').val();	
+
+    	var myArray = [];
+ 
+// Adds "hello" on index 0
+
+    		$('.select_stuff').each(function () {
+                if($(this).is(':checked')){
+                	myArray.push($(this).parent().siblings('input').val());
+                	
+                	             	
+                	
+                	
+                }
+            });
+    	if($(this).val()=="delete"){
+    		
+    		
+    	
+            $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray},
+                  		 url: "/stuff/delete_all",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("One Item Deleted");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Deleted");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    		
+    		alert("delete");
+    	}else if($(this).val()=="addtosell"){
+    		
+    	
+// Adds "hello" on index 0
+
+    		 $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray, Userid:userid },
+                  		 url: "/stuff/add_to_sell",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("Item Added");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Deleted");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    		
+    		
+    		
+    	}else if($(this).val()=="removefromsell"){
+    		
+    		 $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray},
+                  		 url: "/sellproduct/remove_all",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("Item Removed");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Removed");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    	}else{
+    		    		alert("No Action Selected");
+
+    	}
+    	
+      
+    })
+	
+	
+	  
+	});
+	
+	
+	
+</script>

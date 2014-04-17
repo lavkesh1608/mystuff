@@ -1,0 +1,13 @@
+<section id="content">
+
+
+<%= form_for User.new ,:as => :user, :url=>create_session_path, :method => 'post'  do |f| %>
+  <h1>Login Form</h1>
+ 
+  <%= f.text_field :email, :placeholder => "E-mail" ,:id=>"username"%>
+  <%= f.password_field :password , :placeholder => "Password" ,:id=>"password"%><br />
+  <%= f.submit "Login" %>   <%= link_to "Register", new_user_path %>
+
+<% end %>
+ 
+</section>

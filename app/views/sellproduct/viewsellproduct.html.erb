@@ -1,0 +1,55 @@
+
+<section id="content">
+
+<table>
+		<thead>
+			<tr>
+				<th>No</th>
+				<th>Name</th>
+				<th>Brand</th>
+				<th>Model</th>
+				<th>Price</th>
+				<th>DOP</th>
+				<th>Category</th>
+				<th>Edit</th>
+				<th>Delete</th>
+				<th>Select All <input type="checkbox" id="selectallstuff"/></th>
+			</tr>
+		</thead>
+		<tbody>
+			<%@i=1%>
+			<%if @sellproduct.present? %>
+	
+			<% @sellproduct.each do |sp| %>
+			<tr>
+				<input type="hidden" name="sellproduct_id" value="<%=sp.id%>" />
+				<td><%=@i%></td>
+				<%@sp=getDetailById(sp.stuff_id)%>
+				<td><%=@sp.name%></td>
+				<td><%=@sp.brand%></td>
+				<td><%=@sp.model%></td>
+				<td><%=@sp.price %></td>
+				<td><%=@sp.date_of_purchase %></td>
+				<td><%=@sp.category_id %></td>
+				<td><a href="#" class="edit_stuff">Edit</a> </td>
+				<td><a href="" class="delete_stuff">Remove</a> </td>
+				
+				<td><input type="checkbox" class="select_stuff"   /></td>	
+
+			</tr>
+			<%@i+=1 %>
+			<%end %>
+			<%end %>
+			
+		</tbody>
+		
+	</table>
+	<br />
+	<div class="action_div" align="right">
+	Select Action	<select id="choose_action">
+			<option>Select Action</option>
+			<option value="removefromsell">Remove </option>
+			<option value="addtosell">AddToSell</option>
+		</select>
+	</div>
+</section>

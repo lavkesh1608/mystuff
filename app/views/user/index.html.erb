@@ -1,0 +1,103 @@
+
+
+<!-- <div id="addstuff_window" style="display: block;position: absolute; opacity: 1;z-index: 11000;left: 50%;margin-left: -238px;top: 20px;width: 20%;text-align: center;">
+<a class="close_window" href="#">x</a>  
+<div id="addstuffform">
+	<select id="category_id">
+		<option value="">Select Category</option>
+		<% @category.each do |c| %>
+		<option value="<%=c.id%>"><%=c.name%></option>
+		<%end%>
+		
+	</select><br />
+Brand <br />
+<input type="text" name="brand" id="brand" /><br />
+
+Name<br />
+<input type="text" name="name" id="name" /><br />
+
+Model <br />
+<input type="text" name="model" id="model" /><br />
+Description<br />
+<input type="text" name="description" id="description" /><br />
+Price<br />
+<input type="text" name="price" id="price" /><br />
+Date_of_purchase <br />
+<input type="text" name="date_of_purchase" id="date_of_purchase" /><br />
+<input type="hidden" name="userid" id="userid" value="<%= session[:user_id] %>" />
+<p class="button"><input type="button" name="submit" id="submit" value="Add" /></p>
+<!-- <%= link_to "Forgot Password" ,"#" ,:id=>"mylink"%> -->	
+<!--	</div>
+</div> -->
+	
+	<div id="viewstuff_window" style="display: block;
+position: absolute;
+opacity: 1;
+z-index: 11000;
+left: 50%;
+margin-left: -238px;
+top: 20px;width: 20%;text-align: center;">
+<a class="close_window" href="#">x</a>  
+<div id="viewstuffform">
+	<select id="category_id2">
+		<option value="">Select Category</option>
+		
+		<%@category.each do |uc| %>
+		
+		<option value="<%=uc.id %>" > <%=uc.name%> </option>
+		
+		<%end%>
+		
+	</select><br />
+	<table>
+		<thead>
+			<tr>
+				<th>No</th>
+				<th>Name</th>
+				<th>Brand</th>
+				<th>Model</th>
+				<th>Price</th>
+				<th>DOP</th>
+				<th>Category</th>
+					<th>Edit</th>
+					<th>Delete</th>
+					<th>AddToSell</th>
+					<th>AddSecurity</th>
+			</tr>
+		</thead>
+		<tbody>
+			<%@i=1%>
+			<%if @stuff.present? %>
+	
+			<% @stuff.each do |s| %>
+			<tr>
+				<input type="hidden" name="stuff_id" value="<%=s.id%>" />
+				<td><%=@i%></td>
+				<td><%=s.name%></td>
+				<td><%=s.brand%></td>
+				<td><%=s.model%></td>
+				<td><%=s.price %></td>
+				<td><%=s.date_of_purchase %></td>
+				<td><%=s.category_id %></td>
+				<td><a href="" id="edit_stuff">Edit</a> </td>
+				<td><a href="" id="delete_stuff">Delete</a> </td>
+				<td><a href="" id="add_to_sell">AddToSell</a> </td>
+				<td><a href="" id="add_security">AddSecurity</a> </td>
+
+
+			</tr>
+			<%@i+=1 %>
+			<%end %>
+			<%end %>
+			
+		</tbody>
+		
+	</table>
+
+</div>
+	</div>
+	
+	
+
+       
+

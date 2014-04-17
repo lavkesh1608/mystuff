@@ -1,0 +1,144 @@
+
+<section id="content">
+<div id="viewstuffform" style="">
+	<select id="category_id2">
+		<option value="">Select Category</option>
+		
+		<%@category.each do |uc| %>
+		
+		<option value="<%=uc.id %>" > <%=uc.name%> </option>
+		
+		<%end%>
+		
+	</select><br />
+	<table>
+		<thead>
+			<tr>
+				<th>No</th>
+				<th>Name</th>
+				<th>Brand</th>
+				<th>Model</th>
+				<th>Price</th>
+				<th>DOP</th>
+				<th>Category</th>
+				<th>Edit</th>
+				<th>Delete</th>
+				<th>AddToSell</th>
+				<th>AddSecurity</th>
+				<th>Select All <input type="checkbox" id="selectallstuff" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<%@i=1%>
+			<%if @stuff.present? %>
+	
+			<% @stuff.each do |s| %>
+			<tr>
+				<input type="hidden" name="stuff_id" value="<%=s.id%>" />
+				<td><%=@i%></td>
+				<td><%=s.name%></td>
+				<td><%=s.brand%></td>
+				<td><%=s.model%></td>
+				<td><%=s.price %></td>
+				<td><%=s.date_of_purchase %></td>
+				<td><%@catename=getCategoryNameById(s.category_id) %>
+					<%=@catename.name%>
+				</td>
+				<td><a href="#" class="edit_stuff">Edit</a> </td>
+				<td><a href="" class="delete_stuff">Delete</a> </td>
+				<td><a href="" id="add_to_sell">AddToSell</a> </td>
+				<td><a href="#" class="add_security">AddSecurity</a> </td>
+				<td><input type="checkbox" class="select_stuff"   /></td>	
+
+			</tr>
+			<%@i+=1 %>
+			<%end %>
+			<%end %>
+			
+		</tbody>
+		
+	</table>
+	<br />
+	<div class="action_div" align="right">
+	Select Action	<select id="choose_action">
+			<option>Select Action</option>
+			<option value="delete">Delete</option>
+			<option value="addtosell">AddToSell</option>
+		</select>
+	</div>
+	
+
+
+</div>
+
+
+<div id="editstuff_window" style="display: block;position: absolute; background-color:rgb(132, 148, 81);padding:10px; opacity: 1;z-index: 11000;left: 50%;margin-left: -238px;top: 20px;width: 40%;text-align: center;">
+<a class="close_window" href="#">x</a>  
+<div id="addstuffform">
+	<select id="edit_category_id">
+		<option value="">Select Category</option>
+		<% @category.each do |c| %>
+		<option value="<%=c.id%>"><%=c.name%></option>
+		<%end%>
+		
+	</select><br />
+	Id
+	<input type="text" id="productid" name="productid" /><br />
+Brand <br />
+<input type="text" name="editbrand" id="editbrand" /><br />
+
+Name<br />
+<input type="text" name="editname" id="editname" /><br />
+
+Model <br />
+<input type="text" name="editmodel" id="editmodel" /><br />
+Description<br />
+<input type="text" name="editdescription" id="editdescription" /><br />
+Price<br />
+<input type="text" name="editprice" id="editprice" /><br />
+Date_of_purchase <br />
+<input type="text" name="edit_date_of_purchase" id="edit_date_of_purchase" /><br />
+<input type="hidden" name="userid" id="userid" value="<%= session[:user_id] %>" />
+<p class="button"><input type="button" name="update" id="update" value="Update" /></p>
+<!-- <%= link_to "Forgot Password" ,"#" ,:id=>"mylink"%> -->	
+	</div>
+</div>
+
+<div id="addsecurity_window" style="display: block;background-color:rgb(132, 148, 81);padding:10px;position: absolute; opacity: 1;z-index: 11000;left: 50%;margin-left: -238px;top: 20px;width: 35%;text-align: center;">
+<a class="close_window" href="#">x</a>  
+<form name="photo" id="addSecurityForm" enctype="multipart/form-data" action=" " method="post">
+
+<div id="addstuffform">
+	<select id="category_id">
+		<option value="">Select Category</option>
+		<% @category.each do |c| %>
+		<option value="<%=c.id%>"><%=c.name%></option>
+		<%end%>
+		
+	</select><br />
+	Id
+	<input type="text" id="stuffid" name="stuf_id" /><br />
+EMI NO <br />
+<input type="text" name="emi_no" id="emino" /><br />
+
+BillNo<br />
+<input type="text" name="bill_no" id="billno" /><br />
+
+InsauranceNo <br />
+<input type="text" name="insurance_no" id="insauranceno" /><br />
+Valid Till<br />
+<input type="text" name="ins_valid_till" id="insaurancevalidtill"/><br/>
+Uplaod Document<br />
+<input type="file" name="document" id="document" /><br />
+<input type="hidden" name="user_id" id="userid" value="<%= session[:user_id] %>" />
+<p class="button"><input type="submit" name="add" id="addsecurity" value="Update" /></p>
+<!-- <%= link_to "Forgot Password" ,"#" ,:id=>"mylink"%> -->	
+	</div>
+</div>
+
+
+
+</section>
+
+
+  

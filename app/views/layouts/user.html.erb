@@ -1,0 +1,806 @@
+<html>
+<head>
+  <title>Mystuff</title>
+  
+
+  <%= javascript_include_tag "application" %>
+  
+  
+  <%= javascript_include_tag "jquery-1.11.0.min" %>
+	    <%= javascript_include_tag "validate" %>
+  
+  
+  <%= stylesheet_link_tag "application", media: "all" %>
+  <%= csrf_meta_tags %>
+ 	
+	
+  
+</head>
+<body>
+		 <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
+		 
+	
+	 	   
+   <%if session[:user_id]!=nil%>
+         
+                      <%=link_to "Add Stuff","#",:id=>"addstuff"%>&nbsp;
+                       <%=link_to "View Stuff",view_stuff_path %>&nbsp;
+				      <%=link_to "Add Category","#" %>&nbsp;
+            		  <%=link_to "Add To Resell","#"%>&nbsp;
+            		  <%=link_to "View SellProduct" ,view_sellproduct_path %>
+				      <%=link_to "Logout",user_logout_path %>
+              
+          <%else%>
+				<%=link_to "Website", root_url %> &nbsp;
+          		<%=link_to "SignUp",new_user_path %> &nbsp;
+             	<%=link_to "login" ,user_login_path%>
+              
+          <%end%>
+          
+          <div id="addstuff_window" style="display: block;background-color: gray;
+padding: 10px;position: absolute; opacity: 1;z-index: 11000;left: 50%;margin-left: -238px;top: 20px;width: 20%;text-align: center;">
+<a class="close_window" href="#">x</a>  
+<div id="addstuffform">
+	<select id="category_id">
+		<option value="">Select Category</option>
+		<% @category.each do |c| %>
+		<option value="<%=c.id%>"><%=c.name%></option>
+		<%end%>
+		
+	</select>  <a href="#" id="add_category">+Add</a><br />
+Brand <br />
+<input type="text" name="brand" id="brand"/><br />
+
+Name<br />
+<input type="text" name="name" id="name"/><br />
+
+Model <br />
+<input type="text" name="model" id="model"/><br />
+Description<br />
+<input type="text" name="description" id="description"/> <br />
+Price<br />
+<input type="text" name="price" id="price" /><br />
+Date_of_purchase <br />
+<input type="text" name="date_of_purchase" id="date_of_purchase" /><br />
+<input type="hidden" name="userid" id="userid" value="<%= session[:user_id] %>" />
+<p class="button"><input type="button" name="submit" id="submit" value="Add" /></p>
+<!-- <%= link_to "Forgot Password" ,"#" ,:id=>"mylink"%> -->	
+	</div>
+</div>
+
+ <div id="addcategory_window" style="display: block;background-color: rgb(184, 216, 212);
+padding: 10px;position: relative; opacity: 1;z-index: 11000;left: 50%;margin-left: 33px;top: 20px;width: 20%;text-align: center;">
+<a class="close_cate_window" href="#">x</a>  
+<div id="addcategoryform">
+	Name<br />
+<input type="text" name="category_name" id="category_name"/><br />
+
+Description<br />
+<input type="text" name="category_desc" id="category_desc"/><br />
+
+	<input type="button" value="Add" id="submit_category" />
+	</div>
+</div>
+          
+<% flash.each do |name, msg| %>
+<%= content_tag :div, msg, :id => "flash#{name}" %>
+<% end %>
+<%= yield %>
+
+</body>
+</html>
+<script>
+	$(document).ready(function  () {
+		
+		
+		  $('#addSecurityForm').on('submit',(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            type:'POST',
+            url: '/stuff/add_security',
+            data:formData,
+            cache:false,
+            contentType: false,
+            processData: false,
+            success:function(data){
+            	alert("Security option added to this stuff");
+                console.log("success");
+                console.log(data);
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+            }
+        });
+    }));
+		
+	
+	$('#addstuff_window').hide();
+	$('#viewstuff_window').hide();
+		$('#addcategory_window').hide();
+
+	
+	$('#add_category').click(function(){
+				
+			$('#addcategory_window').show();
+
+	});
+	$('#addstuff').click(function(){
+				
+		$('#addstuff_window').show();
+	
+	});
+	
+	$('#viewstuff').click(function(){
+				
+		$('#viewstuff_window').show();
+	
+	});
+	
+	$('#submit').click(function(){
+			
+			var uid=$('#userid').val();	
+		var cid=$('#category_id').val();
+		var brand=$('#brand').val();
+		var model=$('#model').val();
+		var name=$('#name').val();
+		var price=$('#price').val();
+		var desc=$('#description').val();
+		var dop=$('#date_of_purchase').val();
+		
+		$.ajax({
+			       type: "POST",         
+          		   data: {Uid:uid, Cid:cid, Brand:brand, Model:model, Name:name, Price:price, Desc:desc, Dop:dop},
+                   url: "/stuff/create",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		alert("Stuff Added ");
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+					
+		});
+		
+		
+		
+	});
+	
+	$('#submit_category').click(function(){
+			
+		var uid=$('#userid').val();	
+	
+		var name=$('#category_name').val();
+		
+		var desc=$('#category_desc').val();
+		
+		
+		$.ajax({
+			       type: "POST",         
+          		   data: {Name:name,Desc:desc},
+                   url: "/stuff/add_category",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		
+				   		 $.ajax({
+				 	        type: "GET",
+							data: {},
+
+				 		    url: "/stuff/all_category",
+	
+                            dataType: 'json',
+
+                      
+	  					    success: function(data){                    
+                        // Clear all options from sub category select 
+                        $("select#category_id option").remove();
+                        //put in a empty default line
+                        var row = "<option value=\"" + "" + "\">" + "Select Category" + "</option>";
+                        $(row).appendTo("select#category_id");                        
+                        // Fill sub category select 
+                        $.each(data, function(i, j){
+                        
+                            row = "<option value=\"" + j.id + "\">" + j.name + "</option>";   
+                            $(row).appendTo("select#category_id");                     
+                        });             
+                     }	  					    	 
+
+  			  		});
+				   		
+				   		alert("Category Added ");
+				   				$('#addcategory_window').hide();
+
+				   		
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+		
+		
+
+
+		
+	});
+	
+	
+	
+	
+	$(".close_window").click(function() {
+     $("#addstuff_window").hide();
+       $("#viewstuff_window").hide();
+       $('#addsecurity_window').hide();
+       $('#addcategory_window').hide();
+     
+    });
+    $(".close_cate_window").click(function() {
+    
+       $('#addcategory_window').hide();
+     
+    });
+	
+	
+	  
+	});
+	
+	
+	
+</script>
+
+<script>
+	$(document).ready(function  () {
+	
+	$('#editstuff_window').hide();
+	$('#addsecurity_window').hide();
+	$('#viewstuff_window').hide();
+	
+	$('.edit_stuff').click(function(){
+				
+		$('#editstuff_window').show();
+			var sid=$(this).parent().siblings('input').val();
+			$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid},
+                   url: "/stuff/edit",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		var json_x = data;
+				   		
+				   		$('#editbrand').val(json_x['brand']);
+				$('#editmodel').val(json_x['model']);
+				$('#editname').val(json_x['name']);
+				$('#editprice').val(json_x['price']);
+				$('#editdescription').val(json_x['description']);
+				$('#edit_date_of_purchase').val(json_x['date_of_purchase']);
+				   		
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+			
+			$('#productid').val(sid);	
+	
+	});
+	$('.add_security').click(function(){
+				
+		$('#addsecurity_window').show();
+			var sid=$(this).parent().siblings('input').val();
+			$('#stuffid').val(sid);	
+			
+		});
+		
+	$('#viewstuff').click(function(){
+				
+		$('#viewstuff_window').show();
+	
+	});
+	
+	$('#update').click(function(){
+			
+		
+			var sid=$('#productid').val();
+			var uid=$('#userid').val();	
+					var cid=$('#category_id').val();
+		var brand=$('#editbrand').val();
+		var model=$('#editmodel').val();
+		var name=$('#editname').val();
+		var price=$('#editprice').val();
+		var desc=$('#editdescription').val();
+		var dop=$('#edit_date_of_purchase').val();
+		
+		$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid, Uid:uid, Cid:cid, Brand:brand, Model:model, Name:name, Price:price, Desc:desc, Dop:dop},
+                   url: "/stuff/update",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		alert("Stuff Updated ");
+				   	}else{
+				   		
+				   		ater("Not Updated");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+		
+		
+		
+		
+	});
+	
+	$('.delete_stuff').click(function(){
+				
+			var sid=$(this).parent().siblings('input').val();
+		$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid},
+                   url: "/stuff/delete",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		alert("One Item Deleted");
+				   		
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+		
+		
+		});
+	
+	$(".close_window").click(function() {
+     
+       $("#addstuff_window").hide();
+       $("#viewstuff_window").hide();
+       $('#editstuff_window').hide();
+
+     
+    });
+    
+    $("#selectallstuff").change(function () {
+    	// alert("hi");
+    	// $('.select_stuff').attr("checked", $("#selectallstuff").checked);
+    	
+    	if( $("#selectallstuff").is(':checked')){
+    		
+    		$('.select_stuff').each(function () {
+                $(this).prop("checked", true);
+            });
+    	}else{
+    		$('.select_stuff').each(function () {
+                $(this).prop("checked", false);
+            });
+    	}
+    	
+      
+    })
+    $('#choose_action').change(function () {
+    	
+    	 						var userid=$('#userid').val();	
+
+    	var myArray = [];
+ 
+// Adds "hello" on index 0
+
+    		$('.select_stuff').each(function () {
+                if($(this).is(':checked')){
+                	myArray.push($(this).parent().siblings('input').val());
+                	
+                	             	
+                	
+                	
+                }
+            });
+    	if($(this).val()=="delete"){
+    		
+    		
+    	
+            $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray},
+                  		 url: "/stuff/delete_all",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("One Item Deleted");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Deleted");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    		
+    		alert("delete");
+    	}else if($(this).val()=="addtosell"){
+    		
+    	
+// Adds "hello" on index 0
+
+    		 $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray, Userid:userid },
+                  		 url: "/stuff/add_to_sell",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("Item Added");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Deleted");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    		
+    		
+    		
+    	}else if($(this).val()=="removefromsell"){
+    		
+    		 $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray},
+                  		 url: "/sellproduct/remove_all",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("Item Removed");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Removed");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    	}else{
+    		    		alert("No Action Selected");
+
+    	}
+    	
+      
+    })
+	
+	
+	  
+	});
+	
+	
+	
+</script>
+<script>
+	$(document).ready(function  () {
+	
+	$('#editstuff_window').hide();
+	$('#viewstuff_window').hide();
+	
+	$('.edit_stuff').click(function(){
+				
+		$('#editstuff_window').show();
+			var sid=$(this).parent().siblings('input').val();
+			$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid},
+                   url: "/stuff/edit",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		var json_x = data;
+				   		
+				   		$('#editbrand').val(json_x['brand']);
+				$('#editmodel').val(json_x['model']);
+				$('#editname').val(json_x['name']);
+				$('#editprice').val(json_x['price']);
+				$('#editdescription').val(json_x['description']);
+				$('#edit_date_of_purchase').val(json_x['date_of_purchase']);
+				   $('#edit_category_id').val(json_x['category_id']);		
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+			
+			$('#productid').val(sid);	
+	
+	});
+	$('#viewstuff').click(function(){
+				
+		$('#viewstuff_window').show();
+	
+	});
+	
+	$('#update').click(function(){
+			
+
+			var cid=$('#edit_category_id').val();
+		
+			var sid=$('#productid').val();
+			var uid=$('#userid').val();	
+					
+		var brand=$('#editbrand').val();
+		var model=$('#editmodel').val();
+		var name=$('#editname').val();
+		var price=$('#editprice').val();
+		var desc=$('#editdescription').val();
+		var dop=$('#edit_date_of_purchase').val();
+		
+		$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid, Uid:uid, Cid:cid, Brand:brand, Model:model, Name:name, Price:price, Desc:desc, Dop:dop},
+                   url: "/stuff/update",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		alert("Stuff Updated ");
+				   	}else{
+				   		
+				   		alert("Not Updated");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+		
+		
+		
+		
+	});
+	
+	$('.delete_stuff').click(function(){
+				
+			var sid=$(this).parent().siblings('input').val();
+		$.ajax({
+			       type: "POST",         
+          		   data: {Sid:sid},
+                   url: "/stuff/delete",
+                   dataType: "JSON",
+				   success: function(data){
+				   	
+				   	if(data){
+				   		alert("One Item Deleted");
+				   		
+				   	}else{
+				   		
+				   		ater("Not Added");
+				   	}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+		});
+		
+		
+		});
+	
+	$(".close_window").click(function() {
+     
+       $("#addstuff_window").hide();
+       $("#viewstuff_window").hide();
+       $('#editstuff_window').hide();
+
+     
+    });
+    
+    $("#selectallstuff").change(function () {
+    	// alert("hi");
+    	// $('.select_stuff').attr("checked", $("#selectallstuff").checked);
+    	
+    	if( $("#selectallstuff").is(':checked')){
+    		
+    		$('.select_stuff').each(function () {
+                $(this).prop("checked", true);
+            });
+    	}else{
+    		$('.select_stuff').each(function () {
+                $(this).prop("checked", false);
+            });
+    	}
+    	
+      
+    })
+    $('#choose_action').change(function () {
+    	
+    	 						var userid=$('#userid').val();	
+
+    	var myArray = [];
+ 
+// Adds "hello" on index 0
+
+    		$('.select_stuff').each(function () {
+                if($(this).is(':checked')){
+                	myArray.push($(this).parent().siblings('input').val());
+                	
+                	             	
+                	
+                	
+                }
+            });
+    	if($(this).val()=="delete"){
+    		
+    		
+    	
+            $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray},
+                  		 url: "/stuff/delete_all",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("One Item Deleted");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Deleted");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    		
+    		alert("delete");
+    	}else if($(this).val()=="addtosell"){
+    		
+    	
+// Adds "hello" on index 0
+
+    		 $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray, Userid:userid },
+                  		 url: "/stuff/add_to_sell",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("Item Added");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Deleted");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    		
+    		
+    		
+    	}else if($(this).val()=="removefromsell"){
+    		
+    		 $.ajax({
+			       		type: "POST",         
+          		  		 data: {Sid:myArray},
+                  		 url: "/sellproduct/remove_all",
+                   		 dataType: "JSON",
+				   		success: function(data){
+				   	
+				  	 	if(data){
+				   			alert("Item Removed");
+				   		
+				   		}else{
+				   		
+				   			ater("Not Removed");
+				   		}
+				   	
+				   				   	
+				   	
+				   }
+			
+			
+			
+					});
+    		
+    		
+    	}else{
+    		    		alert("No Action Selected");
+
+    	}
+    	
+      
+    })
+	
+	
+	  
+	});
+	
+	
+	
+</script>
